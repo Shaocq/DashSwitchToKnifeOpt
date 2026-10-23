@@ -1,0 +1,57 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <Nullable>disable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <!-- 妗嗘灦瑕佹眰锛歩nfo.ini 鐨?name銆丆# 鍛藉悕绌洪棿銆丏LL 鏂囦欢鍚嶄笁鑰呬竴鑷?-->
+    <AssemblyName>DashSwitchToKnifeOpt</AssemblyName>
+    <RootNamespace>DashSwitchToKnifeOpt</RootNamespace>
+    <!-- 杈撳嚭鍒?bin/Release/Mod/DashSwitchToKnifeOpt/锛岃鐩綍鍙洿鎺ユ斁杩涙父鎴?Mods 鏂囦欢澶?-->
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+
+    <!-- 娓告垙瀹夎鐩綍锛堝寘鍚?Duckov.exe锛夛紱鍙敤 -p:DuckovPath="..." 瑕嗙洊 -->
+    <DuckovPath Condition="'$(DuckovPath)' == ''">E:\Steam\steamapps\common\Escape from Duckov</DuckovPath>
+    <SubPath>\Duckov_Data\Managed\</SubPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="$(DuckovPath)$(SubPath)TeamSoda.*">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="$(DuckovPath)$(SubPath)Unity*">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="$(DuckovPath)$(SubPath)ItemStatsSystem.dll">
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!--
+    Harmony 涓嶅唴宓屻€佷笉闅?mod 鍒嗗彂锛岃繍琛屾椂渚濊禆鍓嶇疆銆孒armonyLib銆嶏紙宸ュ潑 3589088839锛夈€?    杩欓噷浠呬綔缂栬瘧鏈熷紩鐢紱杩愯鏃舵湰 mod 浼氬湪 AppDomain 涓壘鍒板墠缃浇鍏ョ殑 0Harmony 鍚庡啀瀹夎琛ヤ竵銆?  -->
+  <ItemGroup>
+    <Reference Include="lib\0Harmony.dll">
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!--
+    ModSetting锛堝伐鍧?3595729494锛夊悓鏍蜂粎浣滅紪璇戞湡寮曠敤锛屼笉闅?mod 鍒嗗彂銆?    杩愯鏃跺厛纭 AppDomain 宸茶浇鍏?ModSetting 绋嬪簭闆嗭紝鍐嶈皟鐢?SettingsBuilder锛?    鏈惎鐢?ModSetting 鏃朵笉浼氭墽琛屼换浣曞紩鐢ㄥ叾绫诲瀷鐨勪唬鐮侊紝鍒囧垁鍔熻兘鐓у父鍙敤銆?  -->
+  <ItemGroup>
+    <Reference Include="lib\ModSetting.dll">
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- 鏋勫缓瀹岃嚜鍔ㄦ暣鐞嗘垚鍙姞杞界殑 mod 鏂囦欢澶?-->
+  <Target Name="PackModFolder" AfterTargets="Build">
+    <ItemGroup>
+      <ModPayload Include="$(TargetPath)" />
+      <ModPayload Include="$(MSBuildProjectDirectory)\info.ini" />
+      <ModPayload Include="$(MSBuildProjectDirectory)\preview.png"
+                  Condition="Exists('$(MSBuildProjectDirectory)\preview.png')" />
+      <ModPayload Include="$(MSBuildProjectDirectory)\config.example.txt"
+                  Condition="Exists('$(MSBuildProjectDirectory)\config.example.txt')" />
+    </ItemGroup>
+    <Copy SourceFiles="@(ModPayload)" DestinationFolder="$(OutputPath)Mod\$(AssemblyName)" SkipUnchangedFiles="false" />
+  </Target>
+</Project>
